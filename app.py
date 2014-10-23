@@ -20,6 +20,8 @@ app.config.from_pyfile('secrets.cfg') # Add your Google ID & Secret there.
 RESTRICTED_DOMAIN = app.config.get('RESTRICTED_DOMAIN') # Require this domain for authentication
 SITE_NAME = app.config.get('SITE_NAME')
 
+PASS_MIN_LENGTH = app.config.get('PASS_MIN_LENGTH')
+PASS_BAD_WORDS = app.config.get('PASS_BAD_WORDS')
 
 app.secret_key = 'development'
 oauth = OAuth(app)
@@ -52,7 +54,7 @@ def index():
             return render_template('_base.html', site_name=SITE_NAME)
         # return jsonify({"data": me.data})
         # , computer_target=app.config.get('COMPUTER_MAP')[str(me.data[u'email'])]
-        return render_template('authenticated.html', auth_data=me.data, site_name=SITE_NAME)
+        return render_template('authenticated.html', auth_data=me.data, site_name=SITE_NAME, minlength=PASS_MIN_LENGTH, badwords=PASS_BAD_WORDS)
     return render_template('_base.html', site_name=SITE_NAME)
 
 @app.route('/computer.rdp')

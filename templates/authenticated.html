@@ -1,37 +1,37 @@
 {% extends "_base.html" %}
 
 {% block debug %}
-        {{ auth_data }}
-        {% endblock %}
+{{ auth_data }}
+{% endblock %}
 {% block maincontent %}
-  <div class="row">
+<div class="row">
 
     <!-- Main Blog Content -->
-    <div class="large-9 columns" role="content">
+    <div class="large-8 columns" role="content">
 
-      <article>
+        <article>
 
-        <center><br><br>
-        <h3><a href="/computer.rdp?target=">&rarr; Download the .RDP File &larr;</a></h3><br><br>
-{# <h6>Generated on August 12, 2012.</h6> #}
-        </center>
+            <center><br><br>
+                <h3><a href="/computer.rdp?target=">&rarr; Download the .RDP File &larr;</a></h3><br><br>
+                {# <h6>Generated on August 12, 2012.</h6> #}
+            </center>
 
-      <hr />
+            <hr />
 
-{#         <div class="row">
-          <div class="large-6 columns">
-            <p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit, dolore aliqua non est magna in labore pig pork biltong. Eiusmod swine spare ribs reprehenderit culpa.</p>
-            <p>Boudin aliqua adipisicing rump corned beef. Nulla corned beef sunt ball tip, qui bresaola enim jowl. Capicola short ribs minim salami nulla nostrud pastrami.</p>
-          </div>
+            {#         <div class="row">
+            <div class="large-6 columns">
+                <p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit, dolore aliqua non est magna in labore pig pork biltong. Eiusmod swine spare ribs reprehenderit culpa.</p>
+                <p>Boudin aliqua adipisicing rump corned beef. Nulla corned beef sunt ball tip, qui bresaola enim jowl. Capicola short ribs minim salami nulla nostrud pastrami.</p>
+            </div>
         </div> #}
 
-        <p>Note: You <u>must</u> leave this window open until you're done with your remote desktop session.</p>
+            <p>Note: You <u>must</u> leave this window open until you're done with your remote desktop session.</p>
 
-        <p>When you're done, be sure to <a href="/logout">logout</a>.</p>
+            <p>When you're done, be sure to <a href="/logout">logout</a>.</p>
 
-      </article>
+        </article>
 
-      <hr />
+        <hr />
 
     </div>
 
@@ -40,27 +40,22 @@
 
     <!-- Sidebar -->
 
-    <aside class="large-3 columns">
-
-      {#
-      <h5>Available Computers</h5>
-      <ul class="side-nav">
-        <li><a href="#">News</a></li>
-        <li><a href="#">Code</a></li>
-        <li><a href="#">Design</a></li>
-        <li><a href="#">Fun</a></li>
-        <li><a href="#">Weasels</a></li>
-      </ul>
-#}
-
-      <div class="panel">
-        <h5>Download the Client</h5>
-        <p>First time connecting? You'll need to download the Remote Desktop Client.</p>
-        <a href="#">Mac Client &rarr;</a>
-      </div>
-
+    <aside class="large-4 columns">
+        <div class="panel">
+            <h5>Password Requirements</h5>
+            <ul>
+                <li>{{ minlength }} characters or more</li>
+                <li>Cannot contain your username</li>
+                <li>Cannot contain these words: </li>
+                <ul>
+                    {% for item in badwords %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </ul>
+        </div>
     </aside>
 
     <!-- End Sidebar -->
-  </div>
+</div>
 {% endblock %}
