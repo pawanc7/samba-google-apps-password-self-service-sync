@@ -54,7 +54,15 @@ def index():
             return render_template('_base.html', site_name=SITE_NAME)
         # return jsonify({"data": me.data})
         # , computer_target=app.config.get('COMPUTER_MAP')[str(me.data[u'email'])]
-        return render_template('authenticated.html', auth_data=me.data, site_name=SITE_NAME, minlength=PASS_MIN_LENGTH, badwords=PASS_BAD_WORDS)
+
+        username = me.data['email'].split('@')[0] # username only from e-mail
+
+        return render_template('authenticated.html',
+                               auth_data=me.data,
+                               username=username,
+                               site_name=SITE_NAME,
+                               minlength=PASS_MIN_LENGTH,
+                               badwords=PASS_BAD_WORDS)
     return render_template('_base.html', site_name=SITE_NAME)
 
 @app.route('/computer.rdp')

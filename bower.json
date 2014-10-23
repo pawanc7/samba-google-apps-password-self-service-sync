@@ -4,7 +4,8 @@
   "dependencies": {
     "bootstrap": "^3.2.0",
     "jquery": "^2.1.1",
-    "pwstrength-bootstrap": "^1.2.2"
+    "pwstrength-bootstrap": "^1.2.2",
+    "pwstrength-foundation": "^1.2.4"
   },
   "devDependencies": {}
 }
