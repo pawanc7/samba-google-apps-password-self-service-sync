@@ -5,4 +5,4 @@
 .idea
 .awskey
 secrets.cfg
-
+bower_components/
