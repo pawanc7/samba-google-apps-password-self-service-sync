@@ -1,0 +1,64 @@
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ site_name }} &mdash; Remote Access</title>
+    <!-- This rockin' free template is via Zurb foundation! Per their footer, it's public domain. -->
+
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="style.css" />
+    <script src="modernizr.js"></script>
+</head>
+<body>
+
+<!--
+{% block debug %}
+{% endblock %}
+-->
+
+<!-- Nav Bar -->
+
+<div class="row">
+    <div class="large-12 columns">
+
+        {% if session.google_token %}
+            <div class="nav-bar right">
+                <ul class="button-group">
+                    <li><a href="/logout" class="button"><b>Logout</b></a></li>
+                </ul>
+
+            </div>
+        {% endif %}
+
+        <h1>Remote Access <small> {{ site_name }}</small></h1>
+        <hr /><br>
+
+{% block maincontent %}
+            <br>
+            <div class="text-center">
+                <a href="/login"><img src="sign-in-google.jpg"></a>
+            </div>
+
+{% endblock %}
+<br>
+    </div>
+</div>
+
+
+<!-- Footer -->
+
+<footer class="row">
+    <div class="large-12 columns">
+        <hr />
+        <div class="row">
+            <div class="large-6 columns">
+                <p>An open-source project by <a href="http://nick.semenkovich.com">Nick Semenkovich</a>.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
