@@ -12,3 +12,18 @@ User workflow:
 1. Sign-in to webapp with Google Apps domain credentials
 2. Change password in web app
 3. Web app updates Google (via Directory API) and Samba AD DC.
+
+
+===
+
+How to install:
+
+1. `pip install Flask-OAuthlib`
+2. Install the app! You can roughly do something like:
+    adduser password-change-user
+    chsh -s /bin/false password-change-user
+    # Other security hardening here
+    cd /home/password-change-user/
+    git clone THIS_REPO
+3. Configure apache. You can add something like this to a VirtualHost.
+

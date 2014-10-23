@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 """
-A poor man's RDP gateway for linux.
-
-NOTE: THIS IS NOT A REAL RDP GATEWAY!
+A self-service password change script for Samba 4 AD DC and Google Apps.
 
 By: Nick Semenkovich <semenko@alum.mit.edu> http://nick.semenkovich.com
 
@@ -22,12 +20,6 @@ app.config.from_pyfile('secrets.cfg') # Add your Google ID & Secret there.
 RESTRICTED_DOMAIN = app.config.get('RESTRICTED_DOMAIN') # Require this domain for authentication
 SITE_NAME = app.config.get('SITE_NAME')
 
-# username:s:DOMAIN\username
-RDP_FILE_TEMPLATE = """
-full address:s:%(hostname)s:%(port)d
-disable wallpaper:i:0
-gatewayusagemethod:i:0
-"""
 
 app.secret_key = 'development'
 oauth = OAuth(app)
@@ -59,7 +51,8 @@ def index():
             session.pop('google_token', None)
             return render_template('_base.html', site_name=SITE_NAME)
         # return jsonify({"data": me.data})
-        return render_template('authenticated.html', auth_data=me.data, computer_target=app.config.get('COMPUTER_MAP')[str(me.data[u'email'])], site_name=SITE_NAME)
+        # , computer_target=app.config.get('COMPUTER_MAP')[str(me.data[u'email'])]
+        return render_template('authenticated.html', auth_data=me.data, site_name=SITE_NAME)
     return render_template('_base.html', site_name=SITE_NAME)
 
 @app.route('/computer.rdp')

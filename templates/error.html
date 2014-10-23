@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block maincontent %}
-<h2>Error: Invalid Account</h1>
-<h3>You must login with your {{ domain }} account</h2>
-<h4><a href="https://accounts.google.com/AddSession"><b>Click here</b></a> to add that account.</h3>
+<h2>Error: Invalid Account</h2>
+<h3>You must login with your {{ domain }} account</h3><br>
+<h4><a href="javascript:location.reload();"><b>Click here</b></a> to try again.</h4>
 {% endblock %}
