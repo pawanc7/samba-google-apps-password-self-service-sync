@@ -4,61 +4,96 @@
 {{ auth_data }}
 {% endblock %}
 {% block maincontent %}
+
+<style>
+    .panel-heading {
+        padding: 5px 15px;
+    }
+
+    .panel-footer {
+        padding: 1px 15px;
+        color: #A0A0A0;
+    }
+
+    .profile-img {
+        width: 96px;
+        height: 96px;
+        margin: 0 auto 10px;
+        display: block;
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+    }
+</style>
+
 <div class="row">
 
-    <!-- Main Blog Content -->
-    <div class="large-8 columns" role="content">
-        <article>
-            <center>
-                <h4>Changing Password for {{ auth_data.name }} </h4>
-                <h6>(Username: {{ username }})</h6>
-            </center>
-            <br><br>
+    <div class="col-md-6">
 
-            <form>
-                <div class="row">
-                    <div class="large-8 columns">
-                        <div class="row collapse prefix-radius">
-                            <div class="small-4 columns">
-                                <span class="prefix">Password: </span>
-                            </div>
-                            <div class="small-8 columns">
-                                <input type="password" placeholder="Value" id="password">
-                            </div>
-                        </div>
-                    </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Change Password for {{ auth_data.name }}</strong>
                 </div>
-                <div class="row">
-                    <div class="large-8 columns">
-                        <div class="row collapse prefix-radius">
-                            <div class="small-4 columns">
-                                <span class="prefix">Confirm: </span>
+                <div class="panel-body">
+                    <form role="form" action="#" method="POST">
+                        <fieldset>
+                            <div class="row">
+                                <div class="center-block">
+                                    <img class="profile-img"
+                                         src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120" alt="">
+                                </div>
                             </div>
-                            <div class="small-8 columns">
-                                <input type="password" placeholder="Value">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-10  col-md-offset-1 ">
+                                    <div class="form-group">
+                                        <div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-user"></i>
+												</span>
+                                            <input class="form-control" placeholder="Username" name="loginname" type="text" value="{{ auth_data.email }}" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-lock"></i>
+												</span>
+                                            <input class="form-control" placeholder="Current Password" name="password" type="password" value="" autofocus>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-lock"></i>
+												</span>
+                                            <input class="form-control" placeholder="New Password" name="password" type="password" value="" autofocus>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+												<span class="input-group-addon">
+													<i class="glyphicon glyphicon-lock"></i>
+												</span>
+                                            <input class="form-control" placeholder="New Password Again" name="password_confirm" type="password" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-lg btn-primary btn-block" value="Change Password">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </fieldset>
+                    </form>
                 </div>
-                <a href="#" class="button">Change Password</a>
-            </form>
-
-            <hr />
-
-            {#         <div class="row">
-            <div class="large-6 columns">
-                <p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit, dolore aliqua non est magna in labore pig pork biltong. Eiusmod swine spare ribs reprehenderit culpa.</p>
-                <p>Boudin aliqua adipisicing rump corned beef. Nulla corned beef sunt ball tip, qui bresaola enim jowl. Capicola short ribs minim salami nulla nostrud pastrami.</p>
+                <div class="panel-footer ">
+                    Don't want to change your password? <a href="/logout"> Click Here to Logout </a>
+                </div>
             </div>
-        </div> #}
 
-            <p>Note: You <u>must</u> leave this window open until you're done with your remote desktop session.</p>
+        </div>
 
-            <p>When you're done, be sure to <a href="/logout">logout</a>.</p>
 
-        </article>
-
-        <hr />
 
     </div>
 
@@ -66,23 +101,25 @@
 
 
     <!-- Sidebar -->
-
-    <aside class="large-4 columns">
-        <div class="panel">
-            <h5>Password Requirements</h5>
-            <ul>
-                <li>{{ minlength }} characters or more</li>
-                <li>Cannot contain your username</li>
-                <li>Cannot contain these words: </li>
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Password Requirements</h3>
+            </div>
+            <div class="panel-body">
                 <ul>
-                    {% for item in badwords %}
-                    <li>{{ item }}</li>
-                    {% endfor %}
+                    <li>{{ minlength }} characters or more</li>
+                    <li>Cannot contain your username</li>
+                    <li>Cannot contain these words: </li>
+                    <ul>
+                        {% for item in badwords %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
                 </ul>
-            </ul>
+            </div>
         </div>
-    </aside>
-
+    </div>
     <!-- End Sidebar -->
 </div>
 

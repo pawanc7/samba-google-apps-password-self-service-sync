@@ -2,7 +2,7 @@
 """
 A self-service password change script for Samba 4 AD DC and Google Apps.
 
-By: Nick Semenkovich <semenko@alum.mit.edu> http://nick.semenkovich.com
+By: Nick Semenkovich <semenko@alum.mit.edu> https://nick.semenkovich.com
 
 License: MIT
 
@@ -11,8 +11,7 @@ Google auth code derived from Flask-Oauthlib / Bruno Rocha / https://github.com/
 
 from flask import Flask, redirect, render_template, url_for, session, request, Response, jsonify
 from flask_oauthlib.client import OAuth
-import struct
-import socket
+import os
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('secrets.cfg') # Add your Google ID & Secret there.
@@ -31,7 +30,7 @@ google = oauth.remote_app(
     consumer_key=app.config.get('GOOGLE_ID'),
     consumer_secret=app.config.get('GOOGLE_SECRET'),
     request_token_params={
-        'scope': ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
+        'scope': ['email', 'profile']
     },
     base_url='https://www.googleapis.com/oauth2/v1/',
     request_token_url=None,
@@ -48,7 +47,8 @@ def index():
         try:
             if me.data[u'hd'] != RESTRICTED_DOMAIN or me.data[u'verified_email'] != True:
                 session.pop('google_token', None)
-                return render_template('error.html', domain=RESTRICTED_DOMAIN, site_name=SITE_NAME)
+                return render_template('error.html', domain=RESTRICTED_DOMAIN, site_name=SITE_NAME,
+                                       detailed_errror="Wrong domain name or unverified email.")
         except KeyError:
             session.pop('google_token', None)
             return render_template('_base.html', site_name=SITE_NAME)
@@ -57,15 +57,33 @@ def index():
 
         username = me.data['email'].split('@')[0] # username only from e-mail
 
-        return render_template('authenticated.html',
-                               auth_data=me.data,
-                               username=username,
-                               site_name=SITE_NAME,
-                               minlength=PASS_MIN_LENGTH,
-                               badwords=PASS_BAD_WORDS)
+
+        new_password = request.args.get('newpass') or False  # New password form post.
+        confirm_password = request.args.get('confirmpass') or False
+
+        # TEST FOR request.method == "POST"
+        if new_password is not False:
+            # The user set a username & password. Let's try to change their existing info.
+            if new_password != confirm_password:
+                # ERROR
+                pass
+
+            # First, try to set Samba password.
+
+            print("OMG YOU SET A PASSWORD")
+            pass
+        else:
+            return render_template('authenticated.html',
+                                   auth_data=me.data,
+                                   username=username,
+                                   site_name=SITE_NAME,
+                                   minlength=PASS_MIN_LENGTH,
+                                   badwords=PASS_BAD_WORDS)
+
+    # No google token. Ask the user to log in.
     return render_template('_base.html', site_name=SITE_NAME)
 
-@app.route('/computer.rdp')
+@app.route('/pwchange')
 def getrdp():
     if 'google_token' in session:
         me = google.get('userinfo')
@@ -118,33 +136,19 @@ def authorized(resp):
 def get_google_oauth_token():
     return session.get('google_token')
 
+@app.before_request
+def csrf_protect():
+    if request.method == "POST":
+        token = session.pop('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            abort(403)
 
-# Send a WOL packet
-def wake_on_lan(macaddress):
-    """ Switches on remote computers using WOL. """
+def generate_csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = os.urandom(64).encode('base-64').rstrip()
+    return session['_csrf_token']
 
-    # Check macaddress format and try to compensate.
-    if len(macaddress) == 12:
-        pass
-    elif len(macaddress) == 12 + 5:
-        sep = macaddress[2]
-        macaddress = macaddress.replace(sep, '')
-    else:
-        raise ValueError('Incorrect MAC address format')
-
-    # Pad the synchronization stream.
-    data = ''.join(['FFFFFFFFFFFF', macaddress * 20])
-    send_data = ''
-
-    # Split up the hex values and pack.
-    for i in range(0, len(data), 2):
-        send_data = ''.join([send_data,
-                             struct.pack('B', int(data[i: i + 2], 16))])
-
-    # Broadcast it to the LAN.
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    sock.sendto(send_data, ('<broadcast>', 7))
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
 
 if __name__ == '__main__':

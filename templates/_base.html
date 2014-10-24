@@ -1,15 +1,14 @@
-<!doctype html>
-<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
-<html class="no-js" lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ site_name }} &mdash; Change Password</title>
-    <!-- This rockin' free template is via Zurb foundation! Per their footer, it's public domain. -->
 
     <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="style.css" />
-    <script src="modernizr.js"></script>
+    <link rel="stylesheet" href="bootstrap.min.css" />
 </head>
 <body>
 
@@ -18,47 +17,41 @@
 {% endblock %}
 -->
 
-<!-- Nav Bar -->
+<div class="container">
 
-<div class="row">
-    <div class="large-12 columns">
+    <div class="row">
+        <div class="col-lg-12">
 
-        {% if session.google_token %}
-            <div class="nav-bar right">
-                <ul class="button-group">
-                    <li><a href="/logout" class="button"><b>Logout</b></a></li>
-                </ul>
+            {% if session.google_token %}{% endif %}
 
-            </div>
-        {% endif %}
+            <h1>Change Password <small> {{ site_name }}</small></h1>
+            <hr /><br>
 
-        <h1>Change Password <small> {{ site_name }}</small></h1>
-        <hr /><br>
-
-{% block maincontent %}
+            {% block maincontent %}
             <br>
             <div class="text-center">
                 <a href="/login"><img src="sign-in-google.jpg"></a>
             </div>
 
-{% endblock %}
-<br>
+            {% endblock %}
+            <br>
+        </div>
     </div>
-</div>
 
 
-<!-- Footer -->
+    <!-- Footer -->
 
-<footer class="row">
-    <div class="large-12 columns">
-        <hr />
-        <div class="row">
-            <div class="large-6 columns">
-                <p>An open-source project by <a href="https://nick.semenkovich.com">Nick Semenkovich</a>.</p>
+    <div class="row">
+        <div class="col-md-12">
+            <hr />
+            <div class="row">
+                <div class="col-md-6">
+                    <p>An open-source project by <a href="https://nick.semenkovich.com">Nick Semenkovich</a>.</p>
+                </div>
             </div>
         </div>
     </div>
-</footer>
+</div>
 
 </body>
 </html>

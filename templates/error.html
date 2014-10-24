@@ -2,6 +2,7 @@
 
 {% block maincontent %}
 <h2>Error: Invalid Account</h2>
-<h3>You must login with your {{ domain }} account</h3><br>
+<h3>You must login with your {{ domain }} account.</h3><br>
 <h4><a href="javascript:location.reload();"><b>Click here</b></a> to try again.</h4>
+<h6>The exact error was: {{ detailed_error }}</h6>
 {% endblock %}
