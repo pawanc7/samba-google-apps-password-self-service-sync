@@ -9,9 +9,10 @@ License: MIT
 Google auth code derived from Flask-Oauthlib / Bruno Rocha / https://github.com/rochacbruno
 """
 
-from flask import Flask, redirect, render_template, url_for, session, request, Response, jsonify
+from flask import Flask, redirect, render_template, url_for, session, request, Response, jsonify, abort
 from flask_oauthlib.client import OAuth
 import os
+import hashlib
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('secrets.cfg') # Add your Google ID & Secret there.
@@ -40,7 +41,7 @@ google = oauth.remote_app(
 )
 
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def index():
     if 'google_token' in session:
         me = google.get('userinfo')
@@ -58,27 +59,36 @@ def index():
         username = me.data['email'].split('@')[0] # username only from e-mail
 
 
-        new_password = request.args.get('newpass') or False  # New password form post.
-        confirm_password = request.args.get('confirmpass') or False
+        # User posted, probably wants to set a password, neat!
+        if request.method == "POST":
+            new_password = request.args.get('newpass')
 
-        # TEST FOR request.method == "POST"
-        if new_password is not False:
-            # The user set a username & password. Let's try to change their existing info.
-            if new_password != confirm_password:
-                # ERROR
-                pass
+            # The user set a username & password. Let's sanity check this now.
+            error = "Your passwords didn't match."
+            if new_password == request.args.get('confirmpass'):
+                error = "Your username isn't authorized to use this service."
+                if username in ['caroline', 'webmaster']:
+                    error = "Your password didn't meet length requirements."
+                    if len(new_password) < 1111:
+                        if
+
+
 
             # First, try to set Samba password.
 
-            print("OMG YOU SET A PASSWORD")
+
+            # ./smbclient --list //localhost -U username  <<<< input password... get ret code
             pass
-        else:
-            return render_template('authenticated.html',
-                                   auth_data=me.data,
-                                   username=username,
-                                   site_name=SITE_NAME,
-                                   minlength=PASS_MIN_LENGTH,
-                                   badwords=PASS_BAD_WORDS)
+
+        # Got a get/post with valid google_token.
+        # Maybe there was an error from the POST, or they're just landing at the GET.
+        return render_template('authenticated.html',
+                               auth_data=me.data,
+                               username=username,
+                               site_name=SITE_NAME,
+                               minlength=PASS_MIN_LENGTH,
+                               badwords=PASS_BAD_WORDS,
+                               error=None)
 
     # No google token. Ask the user to log in.
     return render_template('_base.html', site_name=SITE_NAME)
@@ -145,7 +155,7 @@ def csrf_protect():
 
 def generate_csrf_token():
     if '_csrf_token' not in session:
-        session['_csrf_token'] = os.urandom(64).encode('base-64').rstrip()
+        session['_csrf_token'] = hashlib.sha1(os.urandom(64)).hexdigest()
     return session['_csrf_token']
 
 app.jinja_env.globals['csrf_token'] = generate_csrf_token
