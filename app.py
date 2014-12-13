@@ -23,6 +23,9 @@ SITE_NAME = app.config.get('SITE_NAME')
 PASS_MIN_LENGTH = app.config.get('PASS_MIN_LENGTH')
 PASS_BAD_WORDS = app.config.get('PASS_BAD_WORDS')
 
+# These users *cannot* have their passwords set.
+PROHIBITED_USERS = app.config.get('PROHIBITED_USERS')
+
 app.secret_key = 'development'
 oauth = OAuth(app)
 
@@ -40,6 +43,10 @@ google = oauth.remote_app(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
 )
 
+def current_password_is_correct_on_pdc(username, current_password):
+    # Test the user/password combination against local Samba hive.
+    # TODO: Implement this.
+    return False
 
 @app.route('/', methods = ['GET', 'POST'])
 def index():
@@ -61,16 +68,28 @@ def index():
 
         # User posted, probably wants to set a password, neat!
         if request.method == "POST":
+            current_password = request.args.get('currentpass')
             new_password = request.args.get('newpass')
 
-            # The user set a username & password. Let's sanity check this now.
-            error = "Your passwords didn't match."
-            if new_password == request.args.get('confirmpass'):
-                error = "Your username isn't authorized to use this service."
-                if username in ['caroline', 'webmaster']:
-                    error = "Your password didn't meet length requirements."
-                    if len(new_password) < 1111:
-                        if
+            # The user set a username & password. Sanity check time.
+            if username in PROHIBITED_USERS:
+                error = "You are not authorized to use this service."
+            elif new_password != request.args.get('confirmpass'):
+                error = "Your passwords didn't match."
+            elif len(new_password) < 1111:
+                error = "Your password didn't meet length requirements."
+            elif sum([word in new_password.lower() for word in PASS_BAD_WORDS]) > 0:
+                error = "Your password cannot contain: %s" % (', '.join(PASS_BAD_WORDS))
+            elif not current_password_is_correct_on_pdc(username, current_password):
+                error = "Your current password was entered incorrectly. Try again."
+            else:
+                # We've passed sanity testing, let's change the user's password.
+
+                # First, let's set the samba password
+
+                # Next, let's set the GMail password
+
+                # If gmail fails, set the samba password back to the original
 
 
 
