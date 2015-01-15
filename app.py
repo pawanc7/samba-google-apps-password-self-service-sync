@@ -68,20 +68,24 @@ def index():
         error=None
         # User posted, probably wants to set a password, neat!
         if request.method == "POST":
-            current_password = request.args.get('currentpass')
-            new_password = request.args.get('newpass')
+            current_password = request.form.get('password')
+            new_password = request.form.get('newpass')
 
             # The user set a username & password. Sanity check time.
-            if username in PROHIBITED_USERS:
+            if username not in PROHIBITED_USERS:
                 error = "You are not authorized to use this service."
-            elif new_password != request.args.get('confirmpass'):
-                error = "Your passwords didn't match."
-            elif len(new_password) < 1111:
-                error = "Your password didn't meet length requirements."
+            elif new_password is None or current_password is None:
+                error = "You left a password empty. Please try again."
+            elif len(new_password) == 0 or len(current_password) == 0:
+                error = "You left a password empty. Please try again."
+            elif new_password != request.form.get('confirmpass'):
+                error = "Your passwords didn't match. Please try again."
+            elif len(new_password) < 10:
+                error = "Your password was too short. Please enter a longer password."
             elif sum([word in new_password.lower() for word in PASS_BAD_WORDS]) > 0:
-                error = "Your password cannot contain: %s" % (', '.join(PASS_BAD_WORDS))
+                error = "Your new password cannot contain: %s" % (', '.join(PASS_BAD_WORDS))
             elif not current_password_is_correct_on_pdc(username, current_password):
-                error = "Your current password was entered incorrectly. Try again."
+                error = "Your current password was incorrect. Try again."
             else:
                 # We've passed sanity testing, let's change the user's password.
 
