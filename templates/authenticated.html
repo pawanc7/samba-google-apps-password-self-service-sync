@@ -1,148 +1,156 @@
 {% extends "_base.html" %}
 
 {% block debug %}
-{{ auth_data }}
+    {{ auth_data }}
 {% endblock %}
 {% block maincontent %}
 
-<style>
-    .panel-heading {
-        padding: 5px 15px;
-    }
+    <style>
+        .panel-heading {
+            padding: 5px 15px;
+        }
 
-    .panel-footer {
-        padding: 1px 15px;
-        color: #A0A0A0;
-    }
+        .panel-footer {
+            padding: 1px 15px;
+            color: #A0A0A0;
+        }
 
-    .profile-img {
-        width: 96px;
-        height: 96px;
-        margin: 0 auto 10px;
-        display: block;
-        -moz-border-radius: 50%;
-        -webkit-border-radius: 50%;
-        border-radius: 50%;
-    }
-</style>
+        .profile-img {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 10px;
+            display: block;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+        }
+    </style>
 
-<div class="row">
+    <div class="row">
 
-    <div class="col-md-offset-1 col-md-5">
+        <div class="col-md-offset-1 col-md-5">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>Change Password for {{ auth_data.name }}</strong>
+                    </div>
+                    <div class="panel-body">
 
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <strong>Change Password for {{ auth_data.name }}</strong>
-                </div>
-                <div class="panel-body">
-                    <form role="form" action="#" method="POST">
-                        <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
-                        <fieldset>
-                            <div class="row">
-                                <div class="center-block">
-                                    <img class="profile-img" src="{{ auth_data.picture }}" alt="">
-                                </div>
+                        {% if error is not none %}
+                            <div class="alert alert-danger" role="alert">
+                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                <span class="sr-only">Error:</span>
+                                {{ error }}
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12 col-md-10  col-md-offset-1 ">
-                                    <div class="form-group">
-                                        <div class="input-group">
+                        {% endif %}
+
+                        <form role="form" action="#" method="POST">
+                            <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
+                            <fieldset>
+                                <div class="row">
+                                    <div class="center-block">
+                                        <img class="profile-img" src="{{ auth_data.picture }}" alt="">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-10  col-md-offset-1 ">
+                                        <div class="form-group">
+                                            <div class="input-group">
 												<span class="input-group-addon">
 													<i class="glyphicon glyphicon-user"></i>
 												</span>
-                                            <input class="form-control" placeholder="Username" name="loginname" type="text" value="{{ auth_data.email }}" disabled>
+                                                <input class="form-control" placeholder="Username" name="loginname" type="text" value="{{ auth_data.email }}" disabled>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
+                                        <div class="form-group">
+                                            <div class="input-group">
 												<span class="input-group-addon">
 													<i class="glyphicon glyphicon-lock"></i>
 												</span>
-                                            <input class="form-control" placeholder="Current Password" name="password" type="password" value="" autofocus>
+                                                <input class="form-control" placeholder="Current Password" name="password" type="password" value="" autofocus>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
+                                        <div class="form-group">
+                                            <div class="input-group">
 												<span class="input-group-addon">
 													<i class="glyphicon glyphicon-lock"></i>
 												</span>
-                                            <input class="form-control" placeholder="New Password" name="password" type="password" value="" autofocus>
+                                                <input class="form-control" placeholder="New Password" name="password" type="password" value="" autofocus>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
+                                        <div class="form-group">
+                                            <div class="input-group">
 												<span class="input-group-addon">
 													<i class="glyphicon glyphicon-lock"></i>
 												</span>
-                                            <input class="form-control" placeholder="New Password (Again)" name="password_confirm" type="password" value="">
+                                                <input class="form-control" placeholder="New Password (Again)" name="password_confirm" type="password" value="">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="submit" class="btn btn-lg btn-primary btn-block" value="Change Password">
+                                        <div class="form-group">
+                                            <input type="submit" class="btn btn-lg btn-primary btn-block" value="Change Password">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </fieldset>
-                    </form>
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="panel-footer ">
+                        Don't want to change your password? <a href="/logout"> Click Here to Logout </a>
+                    </div>
                 </div>
-                <div class="panel-footer ">
-                    Don't want to change your password? <a href="/logout"> Click Here to Logout </a>
-                </div>
+
             </div>
+
+
 
         </div>
 
+        <!-- End Main Content -->
 
 
-    </div>
-
-    <!-- End Main Content -->
-
-
-    <!-- Sidebar -->
-    <div class="col-md-offset-1 col-md-4">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">Password Requirements</h3>
-            </div>
-            <div class="panel-body">
-                <ul>
-                    <li>{{ minlength }} characters or more</li>
-                    <li>Cannot contain your username</li>
-                    <li>Cannot contain these words: </li>
+        <!-- Sidebar -->
+        <div class="col-md-offset-1 col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Password Requirements</h3>
+                </div>
+                <div class="panel-body">
                     <ul>
-                        {% for item in badwords %}
-                        <li>{{ item }}</li>
-                        {% endfor %}
+                        <li>{{ minlength }} characters or more</li>
+                        <li>Cannot contain your username</li>
+                        <li>Cannot contain these words: </li>
+                        <ul>
+                            {% for item in badwords %}
+                                <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
                     </ul>
-                </ul>
+                </div>
             </div>
         </div>
+        <!-- End Sidebar -->
     </div>
-    <!-- End Sidebar -->
-</div>
 
 
-<script src="jquery.min.js"></script>
-<script src="pwstrength-bootstrap-1.2.2.js"></script>
-<script src="bootstrap.min.js"></script>
-<script type="text/javascript">
-    jQuery(document).ready(function () {
-        "use strict";
-        var options = {};
-        options.ui = {
-            showPopover: true,
-            showErrors: true,
-            showProgressBar: false
-        };
-        options.rules = {
-            activated: {
-                wordTwoCharacterClasses: true,
-                wordRepetitions: true
-            }
-        };
-        $('#password').pwstrength(options);
-    });
-</script>
+    <script src="jquery.min.js"></script>
+    <script src="pwstrength-bootstrap-1.2.2.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            "use strict";
+            var options = {};
+            options.ui = {
+                showPopover: true,
+                showErrors: true,
+                showProgressBar: false
+            };
+            options.rules = {
+                activated: {
+                    wordTwoCharacterClasses: true,
+                    wordRepetitions: true
+                }
+            };
+            $('#password').pwstrength(options);
+        });
+    </script>
 {% endblock %}

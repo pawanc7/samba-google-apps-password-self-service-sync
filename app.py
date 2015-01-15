@@ -65,7 +65,7 @@ def index():
 
         username = me.data['email'].split('@')[0] # username only from e-mail
 
-
+        error=None
         # User posted, probably wants to set a password, neat!
         if request.method == "POST":
             current_password = request.args.get('currentpass')
@@ -91,13 +91,10 @@ def index():
 
                 # If gmail fails, set the samba password back to the original
 
+                # First, try to set Samba password.
 
-
-            # First, try to set Samba password.
-
-
-            # ./smbclient --list //localhost -U username  <<<< input password... get ret code
-            pass
+                # ./smbclient --list //localhost -U username  <<<< input password... get ret code
+                pass
 
         # Got a get/post with valid google_token.
         # Maybe there was an error from the POST, or they're just landing at the GET.
@@ -107,7 +104,7 @@ def index():
                                site_name=SITE_NAME,
                                minlength=PASS_MIN_LENGTH,
                                badwords=PASS_BAD_WORDS,
-                               error=None)
+                               error=error)
 
     # No google token. Ask the user to log in.
     return render_template('_base.html', site_name=SITE_NAME)
