@@ -11,8 +11,11 @@ Google auth code derived from Flask-Oauthlib / Bruno Rocha / https://github.com/
 
 from flask import Flask, redirect, render_template, url_for, session, request, Response, jsonify, abort
 from flask_oauthlib.client import OAuth
-import os
 import hashlib
+import json
+import os
+import requests
+import sys
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('secrets.cfg') # Add your Google ID & Secret there.
@@ -25,6 +28,20 @@ PASS_BAD_WORDS = app.config.get('PASS_BAD_WORDS')
 
 # These users *cannot* have their passwords set.
 PROHIBITED_USERS = app.config.get('PROHIBITED_USERS')
+
+
+### Samba configuration & settings
+# Add a specific import for the Python Samba packages
+sys.path.append("/usr/local/samba/lib/python2.7/site-packages/")
+
+from samba.credentials import Credentials
+from samba.auth import system_session
+from samba.samdb import SamDB
+
+sambaPrivate = "/usr/local/samba/private"
+sambaPath = app.config.get('SAMBA_PATH')
+
+####
 
 app.secret_key = 'development'
 oauth = OAuth(app)
@@ -47,6 +64,35 @@ def current_password_is_correct_on_pdc(username, current_password):
     # Test the user/password combination against local Samba hive.
     # TODO: Implement this.
     return False
+
+def change_samba_password(username, password):
+    # printf "pass\npass\n" | sudo ./smbpasswd -s caroline
+    # echo -e 'new_password\nnew_password' | sudo /usr/local/samba/bin/smbpasswd username  # May fail due to constraints
+    if username in PROHIBITED_USERS:
+        print("ERROR: Prohibited user.")
+        # return False
+    creds = Credentials()
+    samdb = SamDB(url=(sambaPrivate + "/sam.ldb.d/" + sambaPath + ".ldb"), session_info=system_session(), credentials=creds.guess())
+
+    filter = "(&(objectClass=user)(sAMAccountName=%s))" % (username)
+
+    return samdb.setpassword(filter, password, force_change_at_next_login=False, username=username)
+
+
+def change_google_password(username, password):
+    # PUT https://www.googleapis.com/admin/directory/v1/users/user%40example.com?fields=password&key={YOUR_API_KEY}
+    # Content-Type:  application/json
+    # Authorization:  Bearer asdasdasdasdasdasdasdasd (TOKEN)
+    # { "password": "omgOMGomgOMG" }
+
+    url = 'https://www.googleapis.com/admin/directory/v1/users/user%40domain.com?fields=password&key={APIKEYHERE}'
+    headers = {'Content-Type': 'application/json'}
+
+    r = requests.put(url, data=json.dumps(data), headers=headers)
+
+    return json.dumps(r.json(), indent=4)
+    
+    pass
 
 @app.route('/', methods = ['GET', 'POST'])
 def index():
@@ -90,16 +136,18 @@ def index():
                 # We've passed sanity testing, let's change the user's password.
 
                 # First, let's set the samba password
-
-                # Next, let's set the GMail password
-
-                # If gmail fails, set the samba password back to the original
-
-                # First, try to set Samba password.
-
-                # ./smbclient --list //localhost -U username  <<<< input password... get ret code
-                pass
-
+                if change_samba_password(username, new_password):
+                    print('Successfully changed samba password.')
+                    if change_google_password(username, new_password):
+                        print('Successfully changed Google password.')
+                    elif change_samba_password(username, current_password):
+                        error = 'Google changing failed. Reverted to original password.'
+                    else:
+                        error = 'Critical error! Passwords have diverged!'
+                else:
+                    # Samba changing failed. Report that.
+                    error = "Couldn't change password: samba failure."
+                
         # Got a get/post with valid google_token.
         # Maybe there was an error from the POST, or they're just landing at the GET.
         return render_template('authenticated.html',
