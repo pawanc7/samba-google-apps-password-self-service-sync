@@ -1,4 +1,4 @@
-Self-service Password Portal
+[DEPRECATED] Self-service Password Portal
 ============================================
 
 Provide a simple self-service UI &amp; script to sync passwords on a Samba4 AD DC with Google Apps.
